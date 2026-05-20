@@ -1,0 +1,460 @@
+/* =========================================
+   1. 変数定義（Variables）
+   ========================================= */
+   :root {
+    --primary-color: #00897B; 
+    --bg-color: #F4F7F6;    
+    --text-color: hsl(0, 0%, 35%);   
+    --white: #FFFFFF;
+    --border-color: #E0E0E0;
+}
+
+/* =========================================
+   2. ベーススタイル（Base Styles）
+   ========================================= */
+body {
+    font-family: 'Hiragino Sans', 'Open Sans', sans-serif;
+    background-color: #2c3e50;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 修正: セミコロンを追加しました */
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    color: var(--text-color);
+    flex-direction: column;
+    letter-spacing: 0.3em;
+}
+
+/* =========================================
+   3. レイアウト・構造（Layout & Structure）
+   ========================================= */
+#device-container {
+    /* 現代の標準的なスマホサイズ（例：iPhone 13/14の論理ピクセル） */
+    width: 390px;
+    height: 844px;
+    
+    /* --- ★ここを大きく修正します★ --- */
+    /* スマホサイズを基準にしつつ、PC画面に合わせて最大限拡大表示する魔法 */
+    /* ビューポートの幅と高さの小さい方に合わせて、画面の95%（0.95vmin）にフィットさせます */
+    /* これにより、PC画面が巨大でもアプリが大きく表示されます。 */
+    transform: scale(calc(100vmin / 844 * 0.95)); /* 画面の高さに合わせる */
+    
+    /* もし画面の幅に合わせて拡大したい場合は、以下のようにします（通常は高さ優先が綺麗です） */
+    /* transform: scale(calc(100vmin / 390 * 0.95)); */
+    
+    /* 拡大の基準をコンテナの中央にする（真ん中で大きく表示するため） */
+    transform-origin: center center;
+    /* ---------------------------------- */
+
+    overflow-y: auto; /* 縦長なので内部でスクロールできるようにする */
+    position: relative;
+    border-radius: 20px; /* スマホ風の角丸 */
+        /* 4. 背景画像の設定 */
+    background-image: url("./image/chara_mini.png");
+
+}
+
+main, header {
+    width: 100%;
+    /* 修正: max-widthが空欄だったため、一旦100%としています。必要に応じて変更してください */
+    max-width: 100%; 
+    box-sizing: border-box;
+}
+
+/* --- ヘッダー --- */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 20px 5px 10px;
+    background-color: var(--white);
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+header h1 {
+    margin-left: -30px;
+    font-size: 22px;
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+header button {
+    background: none;
+    border: none;
+    font-size: 25px;
+    cursor: pointer;
+    color:#1f7d74; 
+    outline: none;
+}
+header button {
+    /* 動きを滑らかにする（これがないと一瞬で切り替わってしまいます） */
+    transition: transform 0.3s ease;
+}
+header button:hover {
+    /* 右に30度回転させる */
+    transform: rotate(30deg);
+}
+
+/* --- メインコンテンツ --- */
+main {
+    padding: 20px 20px 100px;
+    min-height: 100vh;
+    background-color: transparent;
+}
+
+/* --- フッター --- */
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%; /* 追加: fixed要素の幅を確保 */
+    box-sizing: border-box; /* 追加: paddingを含めた幅計算 */
+    padding: 10px 20px 20px;
+    background-color: var(--bg-color);
+    border-top: 1px solid #ddd;
+    z-index: 100;
+}
+
+footer nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+footer button {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: 0.8s;
+}
+
+footer button:hover {
+    background-color: #ddd;
+}
+
+/* =========================================
+   4. コンポーネント（Components）
+   ========================================= */
+section {
+    background-color: transparent;
+    padding: 0;
+    margin-bottom: 20px;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+h2 {
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #727272;
+}
+
+.card {
+    background-color:rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    position: relative;
+    z-index: 10;
+}
+
+.card h2 {
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+/* --- 修正箇所：内訳カードの専用デザイン --- */
+.price-breakdown-card {
+    background-color:rgba(221, 236, 237, 0.95); /* 画像に合わせた淡いミントグリーン */
+    border-radius: 16px;       /* 画像のように丸みを少し強めに */
+    padding: 24px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.breakdown-title {
+    font-size: 22px;
+    color: #222;
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-weight: 200; /* 太すぎず細すぎない絶妙なウェイト */
+}
+
+.breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;           /* 項目間の縦の隙間 */
+    margin-bottom: 24px; /* 合計金額との間の余白 */
+}
+
+.breakdown-item {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    font-size: 12px; 
+    color: var(--text-color);
+}
+
+.breakdown-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 20px;     /* Totalは大きく */
+    font-weight: 300;
+    color: var(--text-color); /* Totalの文字は黒く強調 */
+}
+
+.total-amount {
+    color: #4A9082; 
+}
+
+/* =========================================
+   5. フォーム・入力要素（Forms & Inputs）
+   ========================================= */
+.input-group {
+    margin-bottom: 16px;
+}
+
+.input-group label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #666;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* HTMLにある不要な改行(<br>)を隠す */
+.input-group br,
+.input-group br:has(+ label input[type="checkbox"]) {
+    display: none;
+}
+
+/* --- 1. 外枠（ここで枠線を描画する） --- */
+.input-wrapper {
+    display: flex; /* アイコンと入力欄を横並びにする */
+    align-items: center; /* 縦のパッと中央揃え */
+    border: 1px solid var(--border-color); /* これが実際の枠線になります */
+    border-radius: 8px; /* 枠の角を丸くする */
+    padding: 0 14px; /* 左右の余白（縦の余白は中の要素に任せる） */
+    background-color: var(--white);
+    overflow: hidden; /* 中身がはみ出ないようにする */
+}
+
+.input-wrapper:focus-within {
+    border-color: var(--primary-color);
+}
+
+/* --- 2. 枠内のアイコン --- */
+.input-wrapper .icon {
+    color: #999;
+    font-size: 16px;
+    width: 24px; /* アイコンの幅を固定して、テキストの開始位置を揃える */
+    text-align: center;
+    margin-right: 8px; /* アイコンと文字の間の隙間 */
+}
+
+/* --- 3. 枠内の入力欄・セレクトボックス --- */
+.input-wrapper input[type="text"],
+.input-wrapper input[type="number"],
+.input-wrapper select {
+    flex: 1; /* 枠内の残りの幅をすべて埋める */
+    border: none; /* ★重要：デフォルトの枠線を完全に消す */
+    background-color: transparent; /* 背景を透明にする */
+    font-size: 16px;
+    color: var(--text-color);
+    padding: 14px 0; /* ここで上下の高さを確保する */
+    outline: none; /* クリック時のデフォルトの青枠を消す */
+}
+
+.input-wrapper select {
+    cursor: pointer;
+}
+
+/* --- 4. 魔法：チェックボックスを「ボタン」に変身させる --- */
+input[type="checkbox"] {
+    display: none;
+}
+
+label:has(input[type="checkbox"]) {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #f8f8f8;
+    border: 1px solid #ccc;
+    border-radius: 10px; /* 丸みをつける */
+    margin: 5px 5px 0 0;
+    font-size: 14px;
+    font-weight: normal;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+label:has(input[type="checkbox"]:checked) {
+    background-color: #E0F2F1; /* 薄いティールブルー */
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* =========================================
+   6. ボタン（Buttons）
+   ========================================= */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* 縦の隙間 */
+    margin-bottom: 10px;
+}
+
+.btn-primary,
+#btn-print {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 18px; /* #btn-printの設定を統合・適応 */
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 137, 123, 0.3);
+}
+
+.btn-primary:active,
+#btn-print:active {
+    transform: scale(0.98); /* 押した時に少し凹むアニメーション */
+}
+
+/* --- 横並びボタンのコンテナ --- */
+.btn-group-secondary {
+    display: flex; /* 横並びにする魔法 */
+    gap: 12px;     /* ボタン同士の隙間 */
+}
+
+/* --- PDF出力と共有の共通デザイン --- */
+.btn-secondary {
+    flex: 1; /* 横幅を50%ずつ均等に広げる */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* アイコンと文字の隙間 */
+    padding: 14px;
+    background-color: var(--white);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-secondary:active { 
+    background-color: #E0F2F1; 
+}
+/* =========================================
+   7. レスポンシブ対応（スマホ実機用最適化）
+   ========================================= */
+   @media screen and (max-width: 768px) {
+    /* 画面の横幅が768px以下（スマホ）の場合のみ、以下のルールを適用する */
+    
+    body {
+        align-items: flex-start; /* 画面の中央揃えを解除し、上から自然に配置 */
+    }
+    header h1 {
+        margin-left: 0px;
+        font-size: 22px;
+        color: var(--text-color);
+        font-weight: bold;
+    }
+    #header-icon img {
+        width: 60px; /* アイコンの横幅をスマホに丁度いいサイズに固定 */
+        height: auto;
+        display: block; /* 画像の下にできる謎の隙間を消す魔法 */
+    }
+    #device-container {
+        width: 100% !important;     /* 固定幅(390px)を解除し、画面幅100%に */
+        height: 100vh !important;   /* 高さを画面いっぱいに */
+        transform: none !important; /* PC用の拡大縮小魔法を完全に解除 */
+        border-radius: 0;           /* スマホ風の角丸を解除 */
+        box-shadow: none;           /* 枠線の影を解除 */
+    }
+
+    main {
+        padding: 15px 15px 100px; /* 実機での見栄えに合わせて余白を微調整 */
+    }
+}
+/* =========================================
+   8. PDF出力用テンプレート（裏紙）のスタイル
+   ========================================= */
+/* 画面上からは見えなくする（ただし生成用に見えない場所で描画しておく魔法） */
+#pdf-wrapper {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+}
+
+#pdf-template {
+    width: 800px; /* A4比率に近い横幅 */
+    padding: 60px;
+    background-color: white;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+    box-sizing: border-box;
+}
+
+/* ヘッダー */
+.pdf-header { margin-bottom: 40px; }
+.pdf-logo-text { font-size: 28px; color: var(--primary-color); margin: 0 0 5px; }
+.pdf-header p { font-size: 12px; color: #777; margin: 0; }
+.pdf-title-box { margin-top: 30px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
+.pdf-title-box h1 { font-size: 32px; font-weight: normal; margin: 0 0 5px; letter-spacing: 2px; }
+.pdf-title-box h3 { font-size: 18px; color: var(--primary-color); margin: 0; font-weight: 500; }
+
+/* セクション共通 */
+.pdf-section { margin-bottom: 40px; }
+.pdf-section-title { font-size: 16px; margin: 0 0 15px; color: #555; }
+
+/* 情報テーブル */
+.pdf-info-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.pdf-info-table th { text-align: left; padding: 5px 0; color: #666; width: 150px; font-weight: normal; }
+.pdf-info-table td { padding: 5px 0; font-weight: bold; }
+
+/* 物件内容リスト */
+.pdf-property-list { font-size: 14px; color: #333; line-height: 1.6; }
+
+/* 内訳テーブル */
+.pdf-price-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.pdf-price-table th, .pdf-price-table td { padding: 12px 5px; text-align: left; border-bottom: 1px solid #eee; }
+.pdf-price-table .amount-col { text-align: right; width: 150px; }
+.pdf-price-table thead th { border-bottom: 2px solid #ddd; color: #666; font-weight: bold; }
+.pdf-price-table tfoot th { border-bottom: none; border-top: 2px solid #333; font-size: 18px; padding-top: 20px; }
+.total-amount-text { color: var(--primary-color); }
+
+/* フッター */
+.pdf-footer { margin-top: 60px; font-size: 12px; color: #888; border-top: 1px solid #eee; padding-top: 20px; }
+.pdf-thanks { color: var(--primary-color); font-weight: bold; font-size: 14px; margin: 0 0 10px; }
+.pdf-company { margin: 0 0 5px; }
+.pdf-timestamp { margin: 0; }
+
+/* 再掲：前回追加したCSS（この部分が完璧なハックになっています） */
+#pdf-wrapper {
+    position: absolute;  /* 浮かす */
+    left: -9999px;       /* 画面の遥か左外側にすっ飛ばす */
+    top: -9999px;
+}

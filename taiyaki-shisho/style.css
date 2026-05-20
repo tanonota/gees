@@ -1,0 +1,159 @@
+@charset "UTF-8";
+
+/* 全体の背景と基本設定 */
+body {
+    background-color: #e0f2fe;
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    color: #333;
+}
+
+/* アプリのメインコンテナ */
+.app-container {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    padding: 40px 20px 30px;
+    position: relative;
+    margin-top: 50px;
+}
+
+/* 上部からひょっこり顔を出すたい師匠 */
+.top-character {
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 4px solid #ffffff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    object-fit: cover;
+    background-color: #7dd3fc;
+}
+
+/* タイトル */
+h1 {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 30px;
+    color: #1f2937;
+}
+
+/* 質問エリア */
+.question-box { 
+    margin-bottom: 20px; 
+}
+
+.question-box label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+/* ドロップダウンのデザイン */
+select {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 2px solid #7dd3fc;
+    border-radius: 10px;
+    background-color: #f8fafc;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px;
+    cursor: pointer;
+    outline: none;
+}
+
+select:focus { 
+    border-color: #0ea5e9; 
+}
+
+/* 診断ボタン */
+.btn-diagnose {
+    width: 100%;
+    background-color: #f97316;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 15px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 4px 6px rgba(249, 115, 22, 0.3);
+}
+
+.btn-diagnose:hover { 
+    background-color: #ea580c; 
+}
+
+.btn-diagnose:active { 
+    transform: translateY(2px); 
+}
+
+/* 結果表示エリア（初期状態は非表示） */
+#result-area {
+    display: none;
+    margin-top: 30px;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+/* 吹き出し横のキャラクターアイコン */
+.character-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 3px solid #7dd3fc;
+    background-color: #e0f2fe;
+}
+
+/* 吹き出しデザイン */
+.speech-bubble {
+    background-color: #ffffff;
+    border: 3px solid #1f2937;
+    border-radius: 15px;
+    padding: 15px;
+    position: relative;
+    font-size: 14.5px;
+    line-height: 1.6;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+}
+
+/* 吹き出しのしっぽ部分 */
+.speech-bubble::before {
+    content: ''; 
+    position: absolute; 
+    top: 25px; 
+    left: -12px;
+    border-width: 10px 14px 10px 0; 
+    border-style: solid; 
+    border-color: transparent #1f2937 transparent transparent;
+}
+
+.speech-bubble::after {
+    content: ''; 
+    position: absolute; 
+    top: 28px; 
+    left: -8px;
+    border-width: 7px 10px 7px 0; 
+    border-style: solid; 
+    border-color: transparent #ffffff transparent transparent;
+}

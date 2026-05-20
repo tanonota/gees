@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaidQuote</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="device-container">
+        <header>
+            <div id="header-icon"><img src="./image/iconico_hitsuji_icon02.png" alt=""></div>
+            <h1>MaidQuote</h1>
+            <button id="nav-settings-btn"><i class="fas fa-cog"></i></button>
+        </header>
+        <div id="chara"></div>
+        
+        <main>
+            <section id="MaidQuote-view">
+    
+                <div class="card">
+                    <h2>依頼内容</h2>
+                    
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <i class="far fa-file-alt icon"></i>
+                            <input type="text" id="quote-name" placeholder="案件名">
+                        </div>
+                    </div>
+    
+                    <div class="input-group">
+                        
+                        <div class="input-wrapper">
+                            <i class="fas fa-broom icon"></i>
+    
+                            <select id="service-type">
+                                <option value="" disabled selected>各種サービス</option>
+                                <option value="housekeeper">ハウスキーパー</option>
+                                <option value="babysitter">ベビーシッター</option>
+                                <option value="maternity_care">産前産後ヘルパー</option>
+                                <option value="other">イベント託児</option>
+                            </select>
+                        </div>
+                    </div>
+        
+                    <div class="input-group">
+            
+                        <div class="input-wrapper">
+                            <i class="far fa-calendar-alt icon"></i>
+                            <select id="frequency">
+                                <option value="" disabled selected>利用頻度を選択</option>
+                                <option value="weekly">毎週</option>
+                                <option value="biweekly">隔週</option>
+                                <option value="monthly">毎月</option>
+                                <option value="other">不定期</option>
+                            </select>
+                        </div>    
+                    </div>
+                </div>
+
+                <div class="card">
+                <h2>物件内容</h2>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <i class="fas fa-ruler-combined icon"></i>
+                        <input type="number" id="area-size" placeholder="面積 (㎡)">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <i class="fas fa-door-open icon"></i>
+                        <input type="number" id="door-count" placeholder="ドア数">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <i class="fas fa-door-closed icon"></i>
+                        <input type="number" id="room-count" placeholder="部屋数">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <i class="fas fa-bed icon"></i>
+                        <input type="number" id="bed-count" placeholder="ベッド数">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <i class="fas fa-bath icon"></i>
+                        <input type="number" id="bath-count" placeholder="お風呂">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <i class="fas fa-info-circle icon"></i>
+                        <input type="number" id="other-details" placeholder="その他の詳細">
+                    </div>
+                </div>
+    
+                <div class="input-group">
+                    <div class="pill-group">
+                        <label><input type="checkbox" id="cond-pet"> ペットあり</label>
+                        <label><input type="checkbox" id="cond-rag"> 絨毯あり</label>
+                        <label><input type="checkbox" id="cond-stairs"> 階段あり</label>
+                        <label><input type="checkbox" id="cond-highclutter"> 大掃除レベル</label>
+                        <label><input type="checkbox" id="cond-priority"> 優先対応</label>
+                        <label><input type="checkbox" id="cond-sleepover"> 宿泊あり</label>
+                        <label><input type="checkbox" id="cond-evening"> 夕方以降</label>     
+                    </div>       
+                </div>
+            </div>
+            
+            <div class="card price-breakdown-card">
+            <h2 class="breakdown-title">内訳</h2>
+
+            <div id="breakdown-list" class="breakdown-list">
+                <div class="breakdown-item">
+                    <span class="item-name">各種料金</span>
+                    <span class="item-price">¥0</span>
+                </div>
+            </div>
+
+            <div class="breakdown-total">
+                <span class="total-label">合計</span>
+                <span id="total-price" class="total-amount">¥0</span>
+            </div>
+        </div>
+            <div class="action-buttons">
+                <div class="btn-group-secondary">
+                    <button id="btn-export" class="btn-secondary">
+                        <i class="far fa-file-pdf"></i> PDF出力
+                    </button>
+                    <button id="btn-share" class="btn-secondary">
+                        <i class="fas fa-share-alt"></i> 共有
+                    </button>
+                </div>
+            </div>
+        </section>     
+    </main>
+</div>
+<div id="pdf-wrapper">
+            <div id="pdf-template">
+                <div class="pdf-header">
+                    <div class="pdf-brand">
+                        <h2 class="pdf-logo-text">MaidQuote</h2>
+                        <p>プロフェッショナルな清掃サービスの見積計算ツール</p>
+                    </div>
+                    <div class="pdf-title-box">
+                        <h1>御見積書</h1>
+                        <h3 id="pdf-main-title"></h3>
+                    </div>
+                </div>
+
+                <div class="pdf-section">
+                    <h4 class="pdf-section-title">■ お見積り詳細</h4>
+                    <table class="pdf-info-table">
+                        <tr>
+                            <th>サービス種類:</th>
+                            <td id="pdf-service-type"></td>
+                        </tr>
+                        <tr>
+                            <th>利用頻度:</th>
+                            <td id="pdf-frequency"></td>
+                        </tr>
+                        <tr>
+                            <th>発行日:</th>
+                            <td id="pdf-date"></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="pdf-section">
+                    <h4 class="pdf-section-title">■ 物件内容</h4>
+                    <div id="pdf-property-details" class="pdf-property-list">
+                        </div>
+                </div>
+
+                <div class="pdf-section">
+                    <h4 class="pdf-section-title">■ お見積り内訳</h4>
+                    <table class="pdf-price-table">
+                        <thead>
+                            <tr>
+                                <th>項目名</th>
+                                <th class="amount-col">金額</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pdf-breakdown-tbody">
+                            </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>合計金額 (税込)</th>
+                                <th class="amount-col total-amount-text" id="pdf-total-price"></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="pdf-footer">
+                    <p class="pdf-thanks">この度は MaidQuote をご利用いただき、誠にありがとうございます。</p>
+                    <p class="pdf-company">MaidQuote - 清掃サービス自動見積システム</p>
+                    <p id="pdf-generated-time" class="pdf-timestamp"></p>
+                </div>
+            </div>
+        </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+    "use strict";
+
+    $(function() {
+        
+        const pricingDetails = {
+            services: {
+                "housekeeper": 5900,
+                "babysitter": 4620,
+                "maternity_care": 5900,
+                "other": 8000
+            },
+            frequency: { 
+                "weekly": 0.9,     
+                "biweekly": 0.95,  
+                "monthly": 1.0,    
+                "other": 1.2       
+            },
+            units: {
+                "area": 100,
+                "door": 500, 
+                "room": 1000,
+                "bed": 500,
+                "bath": 1500
+            },
+            conditions: {
+                "pet": 2000,
+                "rag": 1500,
+                "stairs": 1000,
+                "priority": 3000,
+                "sleepover": 10000,
+                "evening": 2500
+            }
+        };
+
+        
+        function calculateTotal() {
+            const selectedService = $('#service-type').val();
+            const servicePrice = pricingDetails.services[selectedService] || 0;
+
+           
+            const areaSize = Math.max(0, Number($('#area-size').val()) || 0);
+            const doorCount = Math.max(0, Number($('#door-count').val()) || 0); 
+            const roomCount = Math.max(0, Number($('#room-count').val()) || 0);
+            const bedCount = Math.max(0, Number($('#bed-count').val()) || 0);
+            const bathCount = Math.max(0, Number($('#bath-count').val()) || 0);
+
+            
+            if (Number($('#area-size').val()) < 0) $('#area-size').val(0);
+            if (Number($('#door-count').val()) < 0) $('#door-count').val(0); 
+            if (Number($('#room-count').val()) < 0) $('#room-count').val(0);
+            if (Number($('#bed-count').val()) < 0) $('#bed-count').val(0);
+            if (Number($('#bath-count').val()) < 0) $('#bath-count').val(0);
+
+            
+            const areaPrice = areaSize * pricingDetails.units.area;
+            const doorPrice = doorCount * pricingDetails.units.door; 
+            const roomPrice = roomCount * pricingDetails.units.room;
+            const bedPrice = bedCount * pricingDetails.units.bed;
+            const bathPrice = bathCount * pricingDetails.units.bath;
+
+            let conditionPrice = 0;
+            if ($('#cond-pet').is(':checked')) conditionPrice += pricingDetails.conditions.pet;
+            if ($('#cond-rag').is(':checked')) conditionPrice += pricingDetails.conditions.rag;
+            if ($('#cond-stairs').is(':checked')) conditionPrice += pricingDetails.conditions.stairs;
+            if ($('#cond-priority').is(':checked')) conditionPrice += pricingDetails.conditions.priority;
+            if ($('#cond-sleepover').is(':checked')) conditionPrice += pricingDetails.conditions.sleepover;
+            if ($('#cond-evening').is(':checked')) conditionPrice += pricingDetails.conditions.evening;
+
+            const selectedFrequency = $('#frequency').val();
+            const frequencyMultiplier = selectedFrequency ? pricingDetails.frequency[selectedFrequency] : 1.0;
+
+            let clutterMultiplier = 1.0;
+            if ($('#cond-highclutter').is(':checked')) clutterMultiplier = 1.5;
+
+           
+            let subTotal = servicePrice + areaPrice + doorPrice + roomPrice + bedPrice + bathPrice + conditionPrice;
+            let frequencyAmount = Math.round(subTotal * frequencyMultiplier) - subTotal;
+            let total = Math.round((subTotal + frequencyAmount) * clutterMultiplier);
+
+          
+            $('#total-price').text('¥' + total.toLocaleString()); 
+
+            const $breakdownList = $('#breakdown-list');
+            $breakdownList.empty(); 
+
+           
+            if (servicePrice > 0) {
+                let serviceName = $('#service-type option:selected').text(); 
+                $breakdownList.append(`
+                    <div class="breakdown-item">
+                        <span class="item-name">${serviceName}</span>
+                        <span class="item-price">¥${servicePrice.toLocaleString()}</span>
+                    </div>
+                `);
+            }
+
+           
+            if (areaSize > 0) {
+                $breakdownList.append(`
+                    <div class="breakdown-item">
+                        <span class="item-name">面積 (${areaSize}㎡)</span>
+                        <span class="item-price">¥${areaPrice.toLocaleString()}</span>
+                    </div>
+                `);
+            }
+           
+            if (doorCount > 0) {
+                $breakdownList.append(`
+                    <div class="breakdown-item">
+                        <span class="item-name">ドア数 (${doorCount}ドア)</span>
+                        <span class="item-price">¥${doorPrice.toLocaleString()}</span>
+                    </div>
+                `);
+            }
+            if (roomCount > 0) {
+                $breakdownList.append(`
+                    <div class="breakdown-item">
+                        <span class="item-name">部屋数 (${roomCount}部屋)</span>
+                        <span class="item-price">¥${roomPrice.toLocaleString()}</span>
+                    </div>
+                `);
+            }
+            if (bedCount > 0) {
+                $breakdownList.append(`
+                    <div class="breakdown-item">
+                        <span class="item-name">ベッド数 (${bedCount}台)</span>
+                        <span class="item-price">¥${bedPrice.toLocaleString()}</span>
+                    </div>
+                `);
+            }
+            if (bathCount > 0) {
+                $breakdownList.append(`
+                    <div class="breakdown-item">
+                        <span class="item-name">お風呂 (${bathCount}箇所)</span>
+                        <span class="item-price">¥${bathPrice.toLocaleString()}</span>
+                    </div>
+                `);
+            }
+
+          
+            if (frequencyAmount !== 0) { 
+                let freqText = $('#frequency option:selected').text(); 
+                let labelText = frequencyAmount < 0 ? `頻度割引 (${freqText})` : `頻度割増 (${freqText})`;
+                $breakdownList.append(`
+                    <div class="breakdown-item">
+                        <span class="item-name">${labelText}</span>
+                        <span class="item-price">¥${frequencyAmount.toLocaleString()}</span>
+                    </div>
+                `);
+            }
+
+          
+            if ($('#cond-pet').is(':checked')) {
+                $breakdownList.append(`
+                    <div class="breakdown-item">
+                        <span class="item-name">ペットあり</span>
+                        <span class="item-price">¥${pricingDetails.conditions.pet.toLocaleString()}</span>
+                    </div>
+                `);
+            }
+            if ($('#cond-rag').is(':checked')) {
+                $breakdownList.append(`
+                    <div class="breakdown-item">
+                        <span class="item-name">絨毯あり</span>
+                        <span class="item-price">¥${pricingDetails.conditions.rag.toLocaleString()}</span>
+                    </div>
+                `);
+            }
+            if ($('#cond-stairs').is(':checked')) {
+                $breakdownList.append(`
+                    <div class="breakdown-item">
+                        <span class="item-name">階段あり</span>
+                        <span class="item-price">¥${pricingDetails.conditions.stairs.toLocaleString()}</span>
+                    </div>
+                `);
+            }
+            if ($('#cond-priority').is(':checked')) {
+                $breakdownList.append(`
+                    <div class="breakdown-item">
+                        <span class="item-name">優先対応</span>
+                        <span class="item-price">¥${pricingDetails.conditions.priority.toLocaleString()}</span>
+                    </div>
+                `);
+            }
+            if ($('#cond-sleepover').is(':checked')) {
+                $breakdownList.append(`
+                    <div class="breakdown-item">
+                        <span class="item-name">宿泊あり</span>
+                        <span class="item-price">¥${pricingDetails.conditions.sleepover.toLocaleString()}</span>
+                    </div>
+                `);
+            }
+            if ($('#cond-evening').is(':checked')) {
+                $breakdownList.append(`
+                    <div class="breakdown-item">
+                        <span class="item-name">夕方以降</span>
+                        <span class="item-price">¥${pricingDetails.conditions.evening.toLocaleString()}</span>
+                    </div>
+                `);
+            }
+            if ($('#cond-highclutter').is(':checked')) {
+                $breakdownList.append(`
+                    <div class="breakdown-item">
+                        <span class="item-name">大掃除レベル (x1.5)</span>
+                        <span class="item-price">-</span>
+                    </div>
+                `);
+            }
+        }
+
+       
+        $('#service-type, #frequency, #area-size, #door-count, #room-count, #bed-count, #bath-count, input[type="checkbox"]').on('change input', function() {
+            calculateTotal();
+        });
+
+        calculateTotal();
+
+        $('#btn-export').on('click', function() {
+            
+            const now = new Date();
+            const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = now.toLocaleDateString('en-US', dateOptions);
+            const timeString = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+
+            const quoteName = $('#quote-name').val() || 'Estimate'; 
+            const serviceName = $('#service-type option:selected').val() ? $('#service-type option:selected').text() : '-';
+            const frequencyText = $('#frequency option:selected').val() ? $('#frequency option:selected').text() : 'One-time';
+
+  
+            $('#pdf-main-title').text(`${serviceName} - ${formattedDate}`);
+            $('#pdf-service-type').text(serviceName);
+            $('#pdf-frequency').text(frequencyText);
+            $('#pdf-date').text(formattedDate);
+            $('#pdf-generated-time').text(`Generated on ${formattedDate} at ${timeString}`);
+
+
+            const $pdfTbody = $('#pdf-breakdown-tbody');
+            $pdfTbody.empty(); 
+
+            $('.breakdown-item').each(function() {
+                const itemName = $(this).find('.item-name').text();
+                const itemPrice = $(this).find('.item-price').text();
+                
+      
+                if (itemPrice !== '¥0') {
+                    $pdfTbody.append(`
+                        <tr>
+                            <td>${itemName}</td>
+                            <td class="amount-col">${itemPrice}</td>
+                        </tr>
+                    `);
+                }
+            });
+
+/*pdf*/
+            $('#pdf-total-price').text($('#total-price').text());
+
+            const element = document.getElementById('pdf-template');
+            const opt = {
+                margin:       [15, 0, 15, 0], 
+                filename:     `${quoteName}_CleanCalc.pdf`, 
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true }, 
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            
+            html2pdf().set(opt).from(element).save();
+        });
+    });
+</script>
+</body>
+</html>
+                
+    

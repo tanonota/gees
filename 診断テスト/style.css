@@ -85,7 +85,7 @@ h1 {
 }
 
 .line-btn {
-    background-color: #06C755;
+    background-color: #3B8598;
     color: #fff;
     border: none;
     padding: 16px 35px;
@@ -96,7 +96,7 @@ h1 {
     text-decoration: none;
     display: inline-block;
     margin-top: 25px;
-    box-shadow: 0 4px 12px rgba(6, 199, 85, 0.35);
+    box-shadow: 0 4px 10px rgba(59, 133, 152, 0.3);
     transition: all 0.3s ease;
 }
 

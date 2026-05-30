@@ -1,0 +1,109 @@
+body {
+    font-family: sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+header {
+    background-color: #333;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+main {
+    padding: 20px;
+}
+.controls {
+    text-align: center;
+    margin: 20px 0;
+}
+/* 要件定義: タップ領域 64px x 64px 以上の確保 */
+.btn {
+    min-width: 120px;
+    min-height: 64px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.btn-primary { background-color: #007bff; color: white; }
+.btn-danger { background-color: #dc3545; color: white; }
+.btn:disabled { background-color: #cccccc; cursor: not-allowed; }
+
+.task-timeline {
+    list-style-type: none;
+    padding: 0;
+}
+.task-item {
+    background: white;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.task-completed { background: #e2f0e5; color: #666; }
+
+.btn-check {
+    background-color: #28a745;
+    color: white;
+    min-width: 100px;
+    min-height: 48px;
+    font-size: 14px;
+}
+.time-stamp {
+    color: #28a745;
+    font-weight: bold;
+    margin-top: 5px;
+    display: block;
+}
+.add-task-area input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+
+/* --- ここから追加：顧客情報入力欄のデザイン --- */
+#customer-info {
+    background-color: transparent;
+    color: white;
+    border: 1px dashed #777;
+    border-radius: 4px;
+    padding: 5px;
+    font-size: 16px;
+    text-align: center;
+    width: 80%;
+    max-width: 300px;
+    margin: 5px auto;
+    display: block;
+}
+
+/* タップ（フォーカス）した時に枠線を白くする */
+#customer-info:focus {
+    outline: none;
+    border-color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+@media screen and (max-width: 480px) {
+    .main-container {
+        padding: 40px 20px;
+    }
+    h1 {
+        font-size: 24px;
+    }
+    .intro-message {
+        font-size: 15px;
+    }
+    .question-text {
+        font-size: 17px;
+    }
+    .ans-btn {
+        width: 110px;
+    }
+}

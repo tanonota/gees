@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お掃除ルーティンチェッカー</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>お掃除ルーティンチェッカー</h1>
+        <input type="text" id="customer-info" value="火曜日のお掃除">
+        <div class="time-info">
+            総予定時間: <span id="total-time">0</span>分 / 残り: <span id="remaining-time">0</span>分
+        </div>
+    </header>
+
+    <main>
+        <div class="controls">
+            <button id="btn-start" class="btn btn-primary">業務開始</button>
+        </div>
+
+        <ul id="task-list" class="task-timeline"></ul>
+
+        <div class="controls add-task-area">
+            <input type="text" id="new-task-name" placeholder=" 例: 窓拭き">
+            <input type="number" id="new-task-time" placeholder="分" style="width: 60px;">
+            <button id="btn-add-task" class="btn btn-primary" style="min-width: 80px; min-height: 48px; font-size: 14px;">追加</button>
+        </div>
+
+        <div class="controls">
+            <button id="btn-show-add" class="btn-plus">＋</button>
+        </div>
+
+        <hr>
+
+        <div class="controls">
+            <button id="btn-end" class="btn btn-danger" disabled>業務終了</button>
+        </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

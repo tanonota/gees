@@ -1,0 +1,70 @@
+@charset "utf-8";
+
+
+
+.field {
+    /* display:flex を設定してみよう */
+}
+
+/* flexbox演習のCSSを記述しよう Start */
+.practice01 {
+    display: flex;
+}
+
+.practice02 {
+    display: flex;
+}
+
+.practice03 {
+    display: flex;
+}
+
+.practice04 {
+    display: flex;
+}
+
+.practice05 {
+    display: flex;
+}
+/* flexbox演習のCSSを記述しよう End */
+
+/* 以下、レイアウト用CSS */
+body {
+    color: #242424; 
+    height: 100%;
+    background-color: #fafafa;
+}
+
+section {
+    margin: 42px 0;
+    padding: 18px 0;
+    border-top: 1px #444 solid;
+    border-bottom: 1px #444 solid;
+    background-color: white;
+}
+.container {
+    margin: 0 auto;
+    max-width: 860px;
+}
+
+.card {
+    width: 150px;
+    height: 150px;
+    background-color: #ddd;
+    display: flex;
+    justify-content: center;
+    border: 1px #242424 solid; 
+    align-items: center;
+}
+
+.card__content {
+    margin: auto;
+}
+
+.is-large {
+    height: 200px;
+}
+
+.is-small {
+    height: 100px;
+}

@@ -1,0 +1,203 @@
+@charset "utf-8";
+
+/* ---------------------
+全体設定
+--------------------- */
+.section__title {
+  padding: 48px 0;
+  font-size: 32px;
+  text-align: center;
+}
+
+section {
+  padding-bottom: 64px;
+}
+
+/* ---------------------
+ナビゲーションメニュー 設定
+--------------------- */
+
+.header__nav {
+  padding: 32px;
+  background-color: #5DA797;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header__logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #E9E9E9;
+}
+
+.header__menu {
+  display: flex;
+  vertical-align: middle;
+}
+
+.header__menu-item {
+  margin-left: 48px;
+}
+
+.header__menu-link {
+  text-decoration: none;
+  color: #E9E9E9;
+}
+
+/* ---------------------
+Top画面設定
+--------------------- */
+
+.top__image {
+  width: 100%;
+  height: 500px;
+  background-image: url('../images/top-image.jpg');
+  background-position: center;
+  background-size: cover;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.top__cover { 
+  width: 100%;
+  height: 500px;
+  background-color: rgba(0,0,0,.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.top__title {
+  color: #E9E9E9;
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+/* ---------------------
+About 画面設定
+--------------------- */
+
+.about {
+  text-align: center;
+}
+
+.about__text {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+/* ---------------------
+Works 作品一覧
+--------------------- */
+
+.works {
+  background-color: #E9E9E9;
+}
+
+.works__cards {
+  display: flex;
+  justify-content: space-around;
+}
+
+.card {
+  width: 30%;
+  background-color: white;
+  box-shadow: 10px 10px 10px rgba(0,0,0,0.4);
+}
+
+.card__image {
+  width: 100%;
+}
+
+.card__image img {
+  width: 100%;
+}
+
+.card__content {
+  padding: 16px 8px;
+}
+
+.card__title {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.card__text {
+  padding: 16px 8px;
+}
+
+/* ---------------------
+ページフッター
+--------------------- */
+
+.footer {
+  padding: 8px;
+}
+
+/* レスポンシブ対応 */
+@media screen and (max-width: 768px) {
+  /* ヘッダーナビゲーション */
+  .header__nav {
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .header__logo {
+    margin-bottom: 16px;
+  }
+
+  .header__menu {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .header__menu-item {
+    margin-left: 0;
+    margin-bottom: 8px;
+  }
+
+  /* トップ画面 */
+  .top__image {
+    height: 300px;
+  }
+
+  .top__cover {
+    height: 300px;
+  }
+
+  .top__title {
+    font-size: 32px;
+    text-align: center;
+    padding: 0 16px;
+  }
+
+  /* セクションタイトル */
+  .section__title {
+    font-size: 24px;
+    padding: 32px 0;
+  }
+
+  /* About画面 */
+  .about__text {
+    font-size: 16px;
+    padding: 0 16px;
+  }
+
+  /* Works作品一覧 */
+  .works__cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    width: 90%;
+    margin-bottom: 32px;
+  }
+
+  /* フッター */
+  .footer {
+    text-align: center;
+  }
+}

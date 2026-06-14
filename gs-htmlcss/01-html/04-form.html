@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="#" method="post">
+        <h2>ユーザー登録フォーム</h2>
+      
+        <label for="username">ユーザー名:</label>
+        <input type="text" id="username" name="username" required>
+      
+        <label for="password">パスワード:</label>
+        <input type="password" id="password" name="password" required>
+      
+        <div class="radio-group">
+          <p>性別:</p>
+          <input type="radio" id="male" name="gender" value="male">
+          <label for="male">男性</label><br>
+          <input type="radio" id="female" name="gender" value="female">
+          <label for="female">女性</label><br>
+          <input type="radio" id="other" name="gender" value="other">
+          <label for="other">その他</label>
+        </div>
+      
+        <div class="checkbox-group">
+          <p>興味のある分野（複数選択可）:</p>
+          <input type="checkbox" id="web" name="interests" value="web">
+          <label for="web">Web開発</label><br>
+          <input type="checkbox" id="mobile" name="interests" value="mobile">
+          <label for="mobile">モバイルアプリ開発</label><br>
+          <input type="checkbox" id="ai" name="interests" value="ai">
+          <label for="ai">AI/機械学習</label>
+        </div>
+      
+        <input type="submit" value="登録">
+    </form>
+</body>
+</html>

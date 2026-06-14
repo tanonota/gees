@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS×QR 打刻アプリ (G's学習版)</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f7f6; padding: 20px; text-align: center; color: #333;}
+        .container { max-width: 400px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .config { background: #eef2f5; padding: 10px; border-radius: 4px; font-size: 0.85em; text-align: left; margin-bottom: 15px; }
+        .config input { width: 100px; padding: 4px; }
+        input[type="text"] { width: 100%; padding: 10px; box-sizing: border-box; margin-bottom: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;}
+        button { padding: 15px; font-size: 16px; background-color: #00B900; color: white; border: none; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 10px; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        #reader { width: 100%; display: none; margin-bottom: 15px; }
+        .status { margin: 10px 0; font-weight: bold; }
+        
+        /* 講義ポイント：表示領域を超えた処理（スクロール制御） */
+        #output { height: 300px; overflow: auto; border: 1px solid #ccc; padding: 10px; text-align: left; background: #fafafa; border-radius: 4px;}
+        .msg-box { background: #fff; padding: 10px; border-left: 4px solid #00B900; margin-bottom: 8px; font-size: 0.9em; box-shadow: 0 1px 2px rgba(0,0,0,0.1);}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>スマート打刻アプリ</h2>
+    
+    <div class="config">
+        <strong>【テスト用】現在地の座標を入力</strong><br>
+        緯度: <input type="number" id="targetLat" value="35.681236" step="0.000001">
+        経度: <input type="number" id="targetLng" value="139.767125" step="0.000001">
+    </div>
+
+    <input type="text" id="uname" placeholder="あなたの名前を入力">
+
+    <button id="btn-gps">📍 GPSで到着を確認</button>
+    <div id="status-msg" class="status"></div>
+
+    <div id="reader"></div>
+
+    <hr style="margin: 20px 0;">
+
+    <h3>📡 リアルタイム打刻ログ</h3>
+    <div id="output"></div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, push, set, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    // gitignore
+    import { firebaseConfig } from "./config.js";
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const dbRef = ref(db, "checkin_history"); // "checkin_history" という名前の場所を参照
+
+    // ==========================================
+    // 1. ローカルストレージ（データの永続化）
+    // ==========================================
+    if(localStorage.getItem("workerName")) {
+        $("#uname").val(localStorage.getItem("workerName"));
+    }
+
+    // ==========================================
+    // 2. GPS取得と非同期処理のUX制御
+    // ==========================================
+    $("#btn-gps").on("click", function() {
+        const uname = $("#uname").val();
+        if(!uname) { alert("名前を入力してください"); return; }
+        
+        localStorage.setItem("workerName", uname); // 名前を保存
+
+        // 【技術概念】通信中のUX制御：ボタンを無効化
+        $("#status-msg").text("GPS情報を取得中...").css("color", "black");
+        $(this).prop("disabled", true);
+
+        if (!navigator.geolocation) {
+            $("#status-msg").text("GPS非対応のブラウザです。").css("color", "red");
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+                const targetLat = parseFloat($("#targetLat").val());
+                const targetLng = parseFloat($("#targetLng").val());
+
+                const distance = calculateDistance(userLat, userLng, targetLat, targetLng);
+                
+                if (distance <= 50) {
+                    $("#status-msg").html(`📍 到着確認！（誤差:約${Math.round(distance)}m）<br>QRコードを読み取ってください。`).css("color", "#00B900");
+                    $("#btn-gps").hide();
+                    startQRScanner(uname); 
+                } else {
+                    $("#status-msg").text(`❌ 指定場所から離れています（約${Math.round(distance)}m）`).css("color", "red");
+                    $("#btn-gps").prop("disabled", false);
+                }
+            },
+            function(error) {
+                $("#status-msg").text("GPS取得失敗。設定を確認してください。").css("color", "red");
+                $("#btn-gps").prop("disabled", false);
+            },
+            { enableHighAccuracy: true }
+        );
+    });
+
+    // ==========================================
+    // 3. QRスキャンとデータ送信 (シリアライズとオブジェクト変数)
+    // ==========================================
+    function startQRScanner(workerName) {
+        $("#reader").show();
+        const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 200, height: 200 } }, false);
+        
+        html5QrcodeScanner.render(function(decodedText) {
+            html5QrcodeScanner.clear();
+            $("#reader").hide();
+            $("#status-msg").text("データをクラウドへ送信中...").css("color", "blue");
+
+            // 【技術概念】 オブジェクト変数によるデータの構造化
+            const msg = {
+                uname: workerName,
+                qrText: decodedText,
+                // 【技術概念】 クライアント時間(new Date)を信用せずサーバー時間を使う
+                time: serverTimestamp() 
+            };
+
+            // Firebaseへ送信 (push & set)
+            const newPostRef = push(dbRef);
+            set(newPostRef, msg).then(() => {
+                $("#status-msg").text("🎉 チェックイン完了！").css("color", "#00B900");
+            });
+
+        }, function(error) { /* 無視 */ });
+    }
+
+    // ==========================================
+    // 4. リアルタイム受信 (イベント駆動型アーキテクチャ)
+    // ==========================================
+    onChildAdded(dbRef, function(data) {
+        const msg = data.val();
+        
+        // サーバー時間の変換処理（まだ到達していない瞬間のエラー回避）
+        let timeString = "送信中...";
+        if (msg.time) {
+            const d = new Date(msg.time);
+            timeString = d.toLocaleString();
+        }
+
+        // 【技術概念】 テンプレートリテラルによる動的HTMLの生成
+        let html = `
+            <div class="msg-box">
+                <strong>👤 ${msg.uname}</strong><br>
+                <span style="font-size: 0.8em; color: #666;">🕒 ${timeString}</span><br>
+                <span>📱 読取: ${msg.qrText}</span>
+            </div>
+        `;
+        
+        // 最新のデータを上に表示する (prepend)
+        $("#output").prepend(html);
+    });
+
+    // --- 補助関数: 距離計算（ハバースイン公式） ---
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371e3; const rad = Math.PI / 180;
+        const a = Math.sin((lat2-lat1)*rad/2)**2 + Math.cos(lat1*rad)*Math.cos(lat2*rad)*Math.sin((lon2-lon1)*rad/2)**2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+</script>
+</body>
+</html>

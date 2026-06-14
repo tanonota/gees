@@ -1,0 +1,27 @@
+/* 1. HTMLタグでセレクト */
+/* 例: すべての段落(pタグ)のフォントサイズを変更 */
+p {
+    font-size:32px;
+    color: #4f90b2;
+}
+
+/* 2. クラスでセレクト */
+/* 例: boxクラスに背景色を適用 */
+.box {
+    padding: 10px; /* 余白をつける */
+    background-color: #ff4b4b;
+}
+
+/* boldクラスにスタイルを適用してみよう */
+
+/* 3. IDでセレクト（サンプル） */
+#unique-box {
+    border: 2px solid blue;
+    padding: 15px;
+}
+
+/* 4. いろんなCSS適用してみよう！ */
+/* ここに自由にCSSを追加してください */
+.playground {
+    /* ここにスタイルを追加 */
+}

@@ -51,11 +51,38 @@
     import { getDatabase, ref, push, set, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
     // gitignore
-    import { firebaseConfig } from "./config.js";
+    import { firebaseConfig, liffId, gmapsApiKey } from "./config.js";
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const dbRef = ref(db, "checkin_history"); // "checkin_history" という名前の場所を参照
+
+    const mapScript = document.createElement("script");
+    mapScript.src = `https://maps.googleapis.com/maps/api/js?key=${gmapsApiKey}`;
+    mapScript.async = true;
+    document.head.appendChild(mapScript);
+
+    // 📱 ★修正: インポートした liffId を使ってLIFFを起動する
+    async function initializeLiff() {
+        try {
+            await liff.init({ liffId: liffId }); // ← config.jsから来た変数を使う
+            
+            if (liff.isLoggedIn()) {
+                const profile = await liff.getProfile();
+                $("#uname").val(profile.displayName);
+                $("#btn-gps").prop("disabled", false);
+                $("#status-msg").text("準備完了！GPSボタンを押してください。").css("color", "black");
+            } else {
+                $("#status-msg").text("LINEログイン画面へ移動します...");
+                liff.login();
+            }
+        } catch (error) {
+            console.error("LIFF Initialization failed", error);
+            $("#status-msg").text("LINE連携に失敗しました。").css("color", "red");
+        }
+    }
+    
+    initializeLiff();
 
     // ==========================================
     // 1. ローカルストレージ（データの永続化）

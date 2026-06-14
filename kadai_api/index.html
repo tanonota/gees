@@ -56,6 +56,8 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const dbRef = ref(db, "checkin_history"); // "checkin_history" という名前の場所を参照
+    // ★追加: LINEのユーザーIDを保存しておくための変数を準備
+    let lineUserId = "取得中...";
 
     const mapScript = document.createElement("script");
     mapScript.src = `https://maps.googleapis.com/maps/api/js?key=${gmapsApiKey}`;
@@ -153,6 +155,7 @@
             const msg = {
                 uname: workerName,
                 qrText: decodedText,
+                userId: lineUserId, // ★追加: FirebaseのデータにLINEユーザーIDを含める
                 // 【技術概念】 クライアント時間(new Date)を信用せずサーバー時間を使う
                 time: serverTimestamp() 
             };

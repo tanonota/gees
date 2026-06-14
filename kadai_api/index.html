@@ -70,6 +70,8 @@
             if (liff.isLoggedIn()) {
                 const profile = await liff.getProfile();
                 $("#uname").val(profile.displayName);
+                // ★追加: LINEの裏側のIDを取得して変数に入れる
+                lineUserId = profile.userId;
                 $("#btn-gps").prop("disabled", false);
                 $("#status-msg").text("準備完了！GPSボタンを押してください。").css("color", "black");
             } else {

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>育児スタイル診断</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="main-container">
+        <h1>定期アンケート</h1>
+        <div class="intro-message">
+            「ちゃんとしなきゃ」と一人で抱え込んでいませんか？子育てに、誰にでも当てはまる完璧な正解はありません。まずはご自身のタイプを知ること。肩の力を抜いて、あなたと家族に「ちょうどいい」カタチを、ここから一緒に見つけませんか。
+        </div>
+        <button class="start-btn" id="start-test">診断 START!</button>
+    </div>
+
+    <div id="modal-overlay"></div>
+
+    <div id="modal-content">
+        <img src="./img/haikei.jpeg" alt="背景" class="modal-bg" id="dynamic-bg">
+
+        <span class="close-btn" id="close-modal">×</span>
+
+        <div class="step-box active" data-step="1" data-bg="./img/step-box1.jpeg">
+            <div class="step-label">Q1 / 4</div>
+            <p class="question-text">眠れない夜、ふと「私、何のために生きてるんだっけ…」と無の感情になることがある。</p>
+            <div class="btn-wrap">
+                <button class="ans-btn" data-score="1">YES</button>
+                <button class="ans-btn" data-score="0">NO</button>
+            </div>
+            <div class="progress-dots">
+                <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
+
+        <div class="step-box" data-step="2" data-bg="./img/step-box2.jpeg">
+            <div class="step-label">Q2 / 4</div>
+            <p class="question-text">SNSの「生後〇ヶ月のルーティン」等の投稿を見ると、参考になるより焦りを感じる。</p>
+            <div class="btn-wrap">
+                <button class="ans-btn" data-score="1">YES</button>
+                <button class="ans-btn" data-score="0">NO</button>
+            </div>
+            <div class="progress-dots">
+                <span class="dot active"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
+
+        <div class="step-box" data-step="3" data-bg="./img/step-box3.jpeg">
+            <div class="step-label">Q3 / 4</div>
+            <p class="question-text">泣いている我が子を見ると、「私がダメな母親だからだ」と自分を責めてしまう。</p>
+            <div class="btn-wrap">
+                <button class="ans-btn" data-score="1">YES</button>
+                <button class="ans-btn" data-score="0">NO</button>
+            </div>
+            <div class="progress-dots">
+                <span class="dot active"></span><span class="dot active"></span><span class="dot active"></span><span class="dot"></span>
+            </div>
+        </div>
+
+        <div class="step-box" data-step="4" data-bg="./img/step-box4.jpeg">
+            <div class="step-label">Q4 / 4</div>
+            <p class="question-text">人に子どもを預けるくらいなら、自分が無理をしてでも一緒にいた方がマシだ。</p>
+            <div class="btn-wrap">
+                <button class="ans-btn" data-score="1">YES</button>
+                <button class="ans-btn" data-score="0">NO</button>
+            </div>
+            <div class="progress-dots">
+                <span class="dot active"></span><span class="dot active"></span><span class="dot active"></span><span class="dot active"></span>
+            </div>
+        </div>
+
+        <div class="step-box" id="result-screen" data-bg="./img/bg_result.jpeg">
+            <div class="step-label" style="color:#3B8598; font-weight:bold;">診断結果</div>
+            <p class="question-text" id="result-title" style="color:#e74c3c; font-size:22px; margin-bottom: 20px;">ここに結果が入ります</p>
+            <p id="result-desc" style="font-size: 14px; color: #555; line-height: 1.7; text-align: left; padding: 0 10px;">ここに説明文が入ります</p>
+            <a href="#" class="line-btn">解決のヒントを学ぶ</a>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

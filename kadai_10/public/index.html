@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スキルチェックシート </title>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- 全体のベーススタイル --- */
+        body { 
+            background-color: #EBF3F5; font-family: 'M PLUS Rounded 1c', sans-serif;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; color: #333; padding: 20px;
+        }
+        .card-container { 
+            background-color: #ffffff; width: 100%; max-width: 450px; border-radius: 20px;
+            padding: 40px 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; box-sizing: border-box;
+        }
+        .card-title { color: #87C2D4; font-size: 1.4rem; margin-top: 0; margin-bottom: 25px; font-weight: bold; }
+        
+        /* 💡 共通の丸枠画像スタイル */
+        .avatar-wrapper {
+            width: 120px; height: 120px; margin: 0 auto 25px; border-radius: 50%;
+            border: 4px solid #D5EAF0; overflow: hidden; background-color: #F8F9FA;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .intro-text { color: #555; line-height: 1.8; font-size: 0.95rem; text-align: left; margin-bottom: 30px; }
+
+        /* 💡 メインカラーの水色ボタン */
+        .btn-main { 
+            background-color: #87C2D4; color: white; border: none; padding: 12px 50px; 
+            font-size: 1.1rem; border-radius: 30px; cursor: pointer; font-weight: bold; transition: 0.2s;
+            width: 100%; box-sizing: border-box; text-decoration: none; display: inline-block; text-align: center;
+        }
+        .btn-main:hover { background-color: #7ABAC9; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(135, 194, 212, 0.4);}
+
+        .login-area { margin-top: 20px; text-align: center; width: 100%; max-width: 450px; }
+
+        /* --- 質問画面用スタイル --- */
+        .progress-circle-wrapper {
+            position: relative; width: 140px; height: 140px; margin: 0 auto 30px; border-radius: 50%;
+            background: conic-gradient(#87C2D4 var(--progress, 0%), #e0f0f5 0%);
+            display: flex; justify-content: center; align-items: center; transition: --progress 0.5s ease;
+        }
+        .progress-circle-inner {
+            width: 125px; height: 125px; background-color: #fff; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; overflow: hidden; border: 3px solid #fff;
+        }
+        /* 💡 円の中の画像をはみ出させない設定 */
+        .progress-circle-inner img { width: 100%; height: 100%; object-fit: cover; }
+
+        .question-text { font-size: 1.1rem; line-height: 1.6; margin-bottom: 30px; min-height: 80px; }
+        .options-container { display: flex; flex-direction: column; gap: 15px; }
+        .option-btn {
+            background-color: #f8f9fa; border: 2px solid #e9ecef; border-radius: 12px; padding: 15px;
+            font-size: 1rem; color: #555; cursor: pointer; transition: all 0.2s; font-family: inherit; text-align: left;
+        }
+        .option-btn:hover, .option-btn:active { background-color: #e0f0f5; border-color: #87C2D4; }
+        .progress-text { margin-top: 20px; font-size: 0.9rem; color: #aaa; }
+        @property --progress { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+    </style>
+</head>
+<body>
+
+    <!-- 💡 1. スタート画面 -->
+    <div id="start-screen" class="card-container">
+        <h1 class="card-title">スキルチェックシート</h1>
+        <div class="avatar-wrapper">
+            <!-- 👇 ここをスタート画面用の画像名に変更してください -->
+            <img src="./image/icochara_base.jpeg" alt="スタート画像">
+        </div>
+        <div class="intro-text">
+            皆様<br>
+            本日は面接にお越しいただきありがとうございます。<br><br>
+            これより、皆様の実務知識やマインドに関する確認テストを実施いたします。直感で最も当てはまるものを選んでください。<br><br>
+        </div>
+        <button id="startBtn" class="btn-main">スタート</button>
+    </div>
+
+    <!-- スタート画面下のログインボタン -->
+    <div id="login-area" class="login-area">
+        <a href="login.php" class="btn-main" style="background-color: #cbd5e1; color: #333;">システムログイン</a>
+    </div>
+
+    <!-- 💡 2. 質問画面（最初は非表示） -->
+    <div id="question-screen" class="card-container" style="display: none;">
+        <h1 class="card-title">スキルチェックシート</h1>
+        <div class="progress-circle-wrapper" style="--progress: 0%;" id="progress-circle">
+            <div class="progress-circle-inner">
+                <!-- 👇 ここを2ページ目(質問画面)用の画像名に変更してください -->
+                <img src="./image/icochara_base.jpeg" alt="質問画像">
+            </div>
+        </div>
+        <div class="question-text" id="question-text"></div>
+        <div class="options-container" id="options-container"></div>
+        <div class="progress-text" id="progress-text">Q.1 / --</div>
+    </div>
+
+    <!-- 💡 3. サンクスページ / 完了画面（最初は非表示） -->
+    <div id="complete-screen" class="card-container" style="display: none;">
+        <h1 class="card-title">回答完了</h1>
+        <div class="avatar-wrapper">
+            <!-- 👇 ここをサンクスページ用の画像名に変更してください -->
+            <img src="./image/icochara_thanks.jpeg" alt="完了画像">
+        </div>
+        <div class="intro-text" style="text-align: center; margin-bottom: 40px; font-weight: bold;">
+            ご回答お疲れ様です。<br><br>
+            面接担当者にお声がけください。
+        </div>
+        <!-- ログインボタンが入る場所 -->
+        <div id="complete-action-area"></div>
+    </div>
+
+    <!-- jQueryの読み込み -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let questions = [];
+            let currentIndex = 0;
+            let totalQuestions = 0;
+            let userAnswers = [];
+
+            // スタートボタンが押された時の処理
+            $('#startBtn').on('click', function() {
+                $('#start-screen').hide();
+                $('#login-area').hide();
+                $('#question-screen').fadeIn(300);
+
+                // JSONデータを読み込む
+                $.getJSON('../config/questions.json')
+                    .done(function(data) {
+                        questions = data;
+                        totalQuestions = questions.length;
+                        renderQuestion(); 
+                    })
+                    .fail(function() {
+                        $('#question-text').text('設問データの読み込みに失敗しました。');
+                    });
+            });
+
+            // 質問を描画する関数
+            function renderQuestion() {
+                const q = questions[currentIndex];
+                $('#question-text').hide().text(q.text).fadeIn(300);
+                $('#progress-text').text(`Q.${currentIndex + 1} / ${totalQuestions}`).show();
+                
+                const progressPercent = (currentIndex / totalQuestions) * 100;
+                $('#progress-circle').css('--progress', `${progressPercent}%`);
+
+                $('#options-container').empty();
+                q.options.forEach((opt) => {
+                    const btn = $('<button>').addClass('option-btn').text(opt.text);
+                    btn.on('click', function() {
+                        handleAnswer(q.id, opt.score);
+                    });
+                    $('#options-container').append(btn);
+                });
+            }
+
+            // 回答ボタンが押された時の処理
+            function handleAnswer(questionId, score) {
+                userAnswers.push({ question_id: questionId, score: score });
+                currentIndex++;
+
+                if (currentIndex < totalQuestions) {
+                    renderQuestion(); // 次の問題へ進む
+                } else {
+                    // 全問完了時の処理
+                    $('#progress-circle').css('--progress', `100%`);
+                    $('#question-text').text('テスト結果を保存しています...');
+                    $('#options-container').empty();
+                    $('#progress-text').hide();
+
+                    // PHPへデータを送信
+                    $.ajax({
+                        url: '../src/api_save.php',
+                        type: 'POST',
+                        data: JSON.stringify(userAnswers),
+                        contentType: 'application/json',
+                        dataType: 'json'
+                    })
+                    .done(function(response) {
+                        if (response.status === 'success') {
+                            // 💡 質問画面を隠して、独立したサンクスページを表示する
+                            $('#question-screen').hide();
+                            $('#complete-screen').fadeIn(300);
+                            
+                            // ログインボタンを生成して追加
+                            const loginBtn = $('<a>')
+                                .text('ログイン')
+                                .attr('href', `login.php?receipt_number=${response.receipt_number}`)
+                                .addClass('btn-main');
+                            
+                            $('#complete-action-area').append(loginBtn);
+
+                        } else {
+                            $('#question-text').text('保存エラー: ' + response.message);
+                        }
+                    })
+                    .fail(function() {
+                        $('#question-text').text('通信エラーが発生しました。ネットワークを確認してください。');
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

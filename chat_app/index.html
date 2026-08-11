@@ -65,29 +65,16 @@
   </div>
 
   <script type="module">
-    // ==========================================
-    // 1. Firebase SDK の読み込み
-    // ==========================================
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getDatabase, ref, push, remove, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        // config.js から設定を読み込む
+        import { firebaseConfig } from "./config.js";
 
-    // ==========================================
-    // 2. Firebase の初期設定
-    // ==========================================
-    const firebaseConfig = {
-      apiKey: "*******",
-      authDomain: "*******",
-      databaseURL: "*******",
-      projectId: "*******",
-      storageBucket: "*******",
-      messagingSenderId: "*******",
-      appId: "*******"
-    };
+        // Firebase の読み込み
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const dbRef = ref(db, "relay_novel"); 
-
+        // 初期化
+        const app = initializeApp(firebaseConfig);
+  
+    
     // ==========================================
     // 3. UIの制御と連携処理 (jQuery)
     // ==========================================

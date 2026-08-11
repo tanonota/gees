@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>リアルタイム・リレー小説</title>
+  
+  <link rel="stylesheet" href="style.css">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hina+Mincho&display=swap" rel="stylesheet">
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+
+  <div class="bg-wrapper">
+    <header>
+      <h1>ぼくらの短編小説</h1>
+      <p>みんなで紡ぐ、少し不思議な物語</p>
+    </header>
+
+    <main>
+      <div class="theme-section">
+        <label for="theme-select">今回のお題：</label>
+        <select id="theme-select">
+          <option value="" selected disabled>お題を選んでください</option>
+          <option value="青春">青春</option>
+          <option value="家族">家族</option>
+          <option value="家電">家電</option>
+          <option value="嘘">嘘</option>
+          <option value="記憶">記憶</option>
+          <option value="食卓">食卓</option>
+          <option value="動物">動物</option>
+          <option value="ルール">ルール</option>
+          <option value="純愛">純愛</option>
+          <option value="ゾンビ">ゾンビ</option>
+        </select>
+        <button id="start-btn" disabled>スタート</button>
+      </div>
+
+      <div class="progress-section" id="progress-area" style="display: none;">
+        <div class="progress-header">
+          <div class="phase-title" id="phase-name">導入</div>
+          <div class="phase-counts">
+            <div id="phase-count">このフェーズの残り：8 ターン</div>
+            <div id="total-count">全体進行：0 / 51 ターン</div>
+          </div>
+        </div>
+        <div class="phase-instruction" id="phase-instruction">
+          指示：...
+        </div>
+      </div>
+
+      <div class="input-section" id="input-area" style="display: none;">
+        <input type="text" id="text" maxlength="20" placeholder="お題に沿って15〜20文字で入力...">
+        <div class="controls">
+          <span class="char-count">0 / 20</span>
+          <button id="send" disabled>送信</button> 
+        </div>
+      </div>
+
+      <div class="notebook-section" id="output"></div>
+    </main>
+  </div>
+
+  <script type="module">
+    // ==========================================
+    // 1. Firebase SDK の読み込み
+    // ==========================================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getDatabase, ref, push, remove, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+    // ==========================================
+    // 2. Firebase の初期設定
+    // ==========================================
+    const firebaseConfig = {
+      apiKey: "*******",
+      authDomain: "*******",
+      databaseURL: "*******",
+      projectId: "*******",
+      storageBucket: "*******",
+      messagingSenderId: "*******",
+      appId: "*******"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const dbRef = ref(db, "relay_novel"); 
+
+    // ==========================================
+    // 3. UIの制御と連携処理 (jQuery)
+    // ==========================================
+    $(document).ready(function() {
+      
+      // --- ゲーム開始前の制御 ---
+      $("#theme-select").on("change", function() {
+        if ($(this).val() !== "") {
+          $("#start-btn").prop("disabled", false);
+        }
+      });
+
+      $("#start-btn").on("click", function() {
+        $("#theme-select").prop("disabled", true);
+        $(this).fadeOut(200);
+        $("#progress-area").fadeIn(600);
+        $("#input-area").fadeIn(600);
+        $("#text").focus();
+      });
+
+      // --- ターン管理 ---
+      let currentTurn = 0;
+      const maxTurn = 51;
+
+      function updatePhase() {
+        let phase = "";
+        let instruction = "";
+        let phaseRemain = 0;
+
+        if (currentTurn < 8) {
+          phase = "導入";
+          phaseRemain = 8 - currentTurn;
+          instruction = "指示：非日常の提示。ダラダラ説明せず、最初から異物や異常な状況を放り込んでください！";
+        } else if (currentTurn < 33) {
+          phase = "展開";
+          phaseRemain = 33 - currentTurn;
+          instruction = "指示：事態のエスカレート。異常な状況に対して右往左往し、話を広げてください！";
+        } else if (currentTurn < 43) {
+          phase = "転換";
+          phaseRemain = 43 - currentTurn;
+          instruction = "指示：視点・価値観の反転。これまでの前提をひっくり返す「どんでん返し」を！";
+        } else if (currentTurn < 51) {
+          phase = "結末";
+          phaseRemain = 51 - currentTurn;
+          instruction = "指示：オチ・余韻。全てを説明しすぎず、衝撃のままスパッと（または皮肉で）落とす！";
+        } else {
+          phase = "完結";
+          phaseRemain = 0;
+          instruction = "1000文字のショートショートが完成しました！お疲れ様でした。";
+          $("#text").prop("disabled", true);
+          $("#send").prop("disabled", true);
+        }
+
+        $("#phase-name").text(phase);
+        $("#phase-instruction").text(instruction);
+        $("#phase-count").text(`このフェーズ残り：${phaseRemain} ターン`);
+        $("#total-count").text(`全体進行：${currentTurn} / ${maxTurn} ターン`);
+      }
+
+      // 初期状態のUIをセット
+      updatePhase();
+
+      // --- 画面への描画処理 ---
+      function renderText(textData, key) {
+        const $wrapper = $("<div>").addClass("line-wrapper").attr("data-key", key);
+        const $deleteBtn = $("<button>").addClass("delete-btn").text("×");
+        const $p = $("<p>").text(textData);
+        
+        $wrapper.append($deleteBtn).append($p);
+        $("#output").append($wrapper);
+        
+        $wrapper[0].scrollIntoView({ behavior: "smooth", inline: "start" });
+      }
+
+      // --- ★Firebaseからデータを受信（追加）した時 ---
+      onChildAdded(dbRef, function(data) {
+        const msg = data.val();
+        const key = data.key;
+        renderText(msg.text, key);
+        currentTurn++;
+        updatePhase();
+
+        // ★追加：リロード時や途中参加時の UI（画面）復元処理
+        if (msg.theme) {
+          $("#theme-select").val(msg.theme).prop("disabled", true);
+          $("#start-btn").hide();
+          $("#progress-area").show();
+          $("#input-area").show();
+        }
+      });
+
+      // --- Firebaseからデータが削除された時（同期） ---
+      onChildRemoved(dbRef, function(data) {
+        const key = data.key;
+        $(`.line-wrapper[data-key="${key}"]`).remove();
+        if (currentTurn > 0) {
+          currentTurn--;
+          updatePhase();
+        }
+      });
+
+      // --- 送信処理 ---
+      function sendText() {
+        const textData = $("#text").val().trim();
+        
+        if(textData.length < 15) {
+          alert("あと " + (15 - textData.length) + " 文字足りません！15文字以上で入力してください。");
+          return;
+        }
+
+        const msg = {
+          text: textData,
+          theme: $("#theme-select").val()
+        };
+
+        push(dbRef, msg);
+
+        $("#text").val("");
+        $(".char-count").text("0 / 20");
+        $("#send").prop("disabled", true);
+      }
+
+      // --- イベントリスナー ---
+      $("#send").on("click", function() {
+        sendText();
+      });
+
+      $("#text").on("keydown", function(e) {
+        if (e.keyCode === 13) { 
+          sendText();
+        }
+      });
+
+      $("#text").on("input", function() {
+        const count = $(this).val().length;
+        $(".char-count").text(`${count} / 20`);
+        if (count >= 15) {
+          $("#send").prop("disabled", false);
+        } else {
+          $("#send").prop("disabled", true);
+        }
+      });
+
+      // --- 削除ボタンが押された時 ---
+      $("#output").on("click", ".delete-btn", function() {
+        if(confirm("この行を削除してやり直しますか？")) {
+          const key = $(this).closest(".line-wrapper").attr("data-key");
+          const specificDataRef = ref(db, "relay_novel/" + key);
+          remove(specificDataRef);
+        }
+      });
+      
+    });
+  </script>
+</body>
+</html>

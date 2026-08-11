@@ -1,0 +1,256 @@
+/* style.css */
+body {
+  margin: 0;
+  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+  background: linear-gradient(90deg, #f8cdda 50%, #bde1e0 50%);
+  color: #333;
+}
+
+header {
+  text-align: center;
+  padding: 40px 0 20px;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+header h1 {
+  font-family: "Hina Mincho", "Hannari Mincho", "Yu Mincho", "Noto Serif JP", serif;
+  font-weight: normal; 
+  font-size: 42px;     
+  margin: 0 0 10px 0;  
+  letter-spacing: 2px; 
+}
+
+main {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 幅の統一設定に追加 */
+.input-section,
+.notebook-section,
+.theme-section,
+.progress-section { 
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ====================================
+   お題ドロップダウンエリア
+   ==================================== */
+.theme-section {
+  background: #fff;
+  border-radius: 10px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px; 
+}
+
+.theme-section label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #555;
+}
+
+#theme-select {
+  padding: 8px 15px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fdfdfa;
+  color: #333;
+  cursor: pointer;
+  outline: none;
+} /* ←★ここ！この閉じカッコが抜けていました */
+
+/* ★追加：スタートボタンのデザイン */
+#start-btn {
+  background: #f8cdda ; /* アクセントの黄色 */
+  color: #333;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+#start-btn:hover:not(:disabled) {
+  background: #bde1e0; /* ホバーで少し濃く */
+}
+
+/* 最初押せない時のデザイン（グレーアウト） */
+#start-btn:disabled {
+  background: #ccc;
+  color: #888;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ====================================
+   進行状況エリア
+   ==================================== */
+.progress-section {
+  background: #fff;
+  border-radius: 10px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed #ddd;
+  padding-bottom: 10px;
+}
+
+.phase-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.phase-counts {
+  font-size: 14px;
+  color: #666;
+  text-align: right;
+  line-height: 1.4;
+}
+
+.phase-instruction {
+  font-size: 15px;
+  color: #419693; /* 目立つオレンジ色 */
+  font-weight: bold;
+}
+
+/* ====================================
+   入力エリア
+   ==================================== */
+.input-section {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+}
+
+#text {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+
+#send {
+  background: #ff9fa8;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#send:hover:not(:disabled) {
+  background: #ff8591;
+}
+
+/* ★追加：15文字未満で送信ボタンが押せない時のデザイン */
+#send:disabled {
+  background: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ====================================
+   原稿用紙デザイン (右詰め・左展開)
+   ==================================== */
+/* ====================================
+   原稿用紙デザイン (右詰め・左展開)
+   ==================================== */
+   .notebook-section {
+    background-color: #fdfdfa; 
+    /* ★修正：ボタンを置くために1マス分(30px)高さを増やし、632pxにする */
+    height: 632px; 
+    border: 1px solid #bba37d; 
+    border-radius: 2px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    
+    /* 縦書き ＆ 右から左へのスクロール設定 */
+    writing-mode: vertical-rl;
+    overflow-x: auto;
+    overflow-y: hidden;
+    
+    background-image: 
+      linear-gradient(to right, #bba37d 1px, transparent 1px),
+      linear-gradient(to bottom, #bba37d 1px, transparent 1px);
+    background-size: 30px 30px;
+    background-position: right top;
+  }
+  
+  /* ★追加：行ごとのまとまり設定（削除ボタンの配置基準） */
+  .line-wrapper {
+    position: relative; 
+  }
+  
+  /* ★追加：削除ボタンのデザインと位置 */
+  .delete-btn {
+    position: absolute;
+    top: 4px;    /* 一番上のマス目に配置 */
+    right: 4px;  /* マス目の横幅の中央あたりに配置 */
+    writing-mode: horizontal-tb; /* ✖の向きを横向きにする */
+    background: #bde1e0;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+    line-height: 22px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    padding: 0;
+    transition: 0.2s;
+  }
+  
+  .delete-btn:hover {
+    background: #ff9fa8;
+  }
+  
+  .notebook-section p {
+    margin: 0;
+    /* ★修正：一番上のマスはボタン用に空けるため、30px（1マス分）下げてから文字を始める */
+    padding-top: 35px;
+    
+    font-size: 20px; 
+    letter-spacing: 10px;
+    line-height: 30px;
+    font-family: "Sawarabi Mincho", "Yu Mincho", "Noto Serif JP", serif;
+    color: #4a3b2c;
+  }

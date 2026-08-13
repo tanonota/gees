@@ -1,6 +1,18 @@
 # 課題名
 スキルチェックシート＆面接ヒアリング支援ツール
 
+- スキルチェックシート入力フォーム
+https://gs-code.sakura.ne.jp/hearing_form/public/index.html
+- システムログイン
+https://gs-code.sakura.ne.jp/hearing_form/public/login.php
+- 個別管理ダッシュボード
+ログインID：admin
+PASS:admin1234
+- 管理ダッシュボード
+ログインID：interviewer
+PASS:inter1234
+
+
 ## 課題内容（どんな作品か）
 - 求職者に対する「スキル・マインド診断」の実施から、面接官による「深掘りヒアリング（音声録音付き）」、そして総合管理者による「AI分析用データの抽出（ZIPダウンロード）」までを一気通貫で行うHR Techアプリケーションです。
 フロントエンドはSPA（Single Page Application）風のUIで直感的に操作でき、バックエンドはPHPとMySQLを用いて堅牢にデータを管理しています。

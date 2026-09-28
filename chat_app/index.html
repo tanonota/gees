@@ -65,16 +65,20 @@
   </div>
 
   <script type="module">
-        // config.js から設定を読み込む
-        import { firebaseConfig } from "./config.js";
+    // config.js から設定を読み込む
+    import { firebaseConfig } from "./config.js";
 
-        // Firebase の読み込み
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+    // Firebase の読み込み
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+    // ★ Databaseの各種機能をインポート
+    import { getDatabase, ref, push, onChildAdded, onChildRemoved, remove } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
-        // 初期化
-        const app = initializeApp(firebaseConfig);
-  
-    
+    // 初期化
+    const app = initializeApp(firebaseConfig);
+    // ★ Databaseの参照を取得
+    const db = getDatabase(app);
+    const dbRef = ref(db, "relay_novel");
+
     // ==========================================
     // 3. UIの制御と連携処理 (jQuery)
     // ==========================================
@@ -89,8 +93,7 @@
 
       $("#start-btn").on("click", function() {
         $("#theme-select").prop("disabled", true);
-        $(this).fadeOut(200);
-        $("#progress-area").fadeIn(600);
+        $(this).fadeOut(200);$("#progress-area").fadeIn(600);
         $("#input-area").fadeIn(600);
         $("#text").focus();
       });
@@ -139,17 +142,14 @@
 
       // --- 画面への描画処理 ---
       function renderText(textData, key) {
-        const $wrapper = $("<div>").addClass("line-wrapper").attr("data-key", key);
-        const $deleteBtn = $("<button>").addClass("delete-btn").text("×");
-        const $p = $("<p>").text(textData);
+        const $wrapper =$("<div>").addClass("line-wrapper").attr("data-key", key);
+        const $deleteBtn =$("<button>").addClass("delete-btn").text("×");
+        const $p =$("<p>").text(textData);
         
-        $wrapper.append($deleteBtn).append($p);
-        $("#output").append($wrapper);
-        
-        $wrapper[0].scrollIntoView({ behavior: "smooth", inline: "start" });
+        $wrapper.append($deleteBtn).append($p);$("#output").append($wrapper);$wrapper[0].scrollIntoView({ behavior: "smooth", inline: "start" });
       }
 
-      // --- ★Firebaseからデータを受信（追加）した時 ---
+      // --- Firebaseからデータを受信（追加）した時 ---
       onChildAdded(dbRef, function(data) {
         const msg = data.val();
         const key = data.key;
@@ -157,7 +157,6 @@
         currentTurn++;
         updatePhase();
 
-        // ★追加：リロード時や途中参加時の UI（画面）復元処理
         if (msg.theme) {
           $("#theme-select").val(msg.theme).prop("disabled", true);
           $("#start-btn").hide();

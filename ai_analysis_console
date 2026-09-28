@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Business Consulting Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* 1. ベース設定 & 汎用クラス */
+        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; color: #ffffff; overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; align-items: center; background-color: #0d0e15; padding: 40px 20px; }
+        .hidden { display: none !important; }
+        .required-tag { background-color: #ff4b72; color: #ffffff; font-size: 11px; padding: 3px 6px; border-radius: 4px; margin-left: 8px; vertical-align: middle; font-weight: 600; }
+
+        /* 2. 背景アニメーション */
+        .bg-animation { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden; background: #0f111a; }
+        .blob { position: absolute; filter: blur(50px); opacity: 0.7; will-change: transform; transform: translateZ(0); animation: move 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(233, 30, 99, 0.5) 0%, transparent 70%); animation-delay: 0s; }
+        .blob-2 { bottom: -20%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(30, 136, 229, 0.5) 0%, transparent 70%); animation-duration: 25s; }
+        .blob-3 { top: 40%; left: 30%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(156, 39, 176, 0.5) 0%, transparent 70%); animation-duration: 22s; animation-direction: alternate-reverse; }
+        @keyframes move { 0% { transform: translate(0, 0) scale(1); } 33% { transform: translate(8vw, 12vh) scale(1.1) rotate(3deg); } 66% { transform: translate(-8vw, -8vh) scale(0.9) rotate(-3deg); } 100% { transform: translate(4vw, 4vh) scale(1.05) rotate(1deg); } }
+
+        /* 3. 各種コンテナ共通 */
+        .container { background: rgba(25, 25, 35, 0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 40px; width: 100%; max-width: 800px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6); margin-bottom: 40px; position: relative; z-index: 1; box-sizing: border-box; }
+        h2 { margin-top: 0; font-size: 28px; font-weight: 700; background: linear-gradient(90deg, #ff4b72, #a64dff, #00d2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 30px; text-align: center; }
+        
+        /* フォーム要素 */
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 13px; color: rgba(255,255,255,0.8); margin-bottom: 8px; font-weight: 500; }
+        textarea { width: 100%; background: rgba(0, 0, 0, 0.4); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 14px; font-size: 14px; box-sizing: border-box; resize: vertical; min-height: 60px; font-family: inherit; transition: all 0.3s ease; }
+        textarea:focus { outline: none; border-color: rgba(166, 77, 255, 0.8); background: rgba(0, 0, 0, 0.6); }
+        .highlight { border-left: 3px solid #ff4b72; }
+        button.action-btn { background: linear-gradient(135deg, #a64dff, #ff4b72); color: #ffffff; border: none; padding: 16px 20px; font-size: 16px; font-weight: 600; border-radius: 12px; cursor: pointer; width: 100%; transition: all 0.3s ease; box-shadow: 0 10px 20px rgba(166, 77, 255, 0.3); margin-top: 20px; }
+        button.action-btn:disabled { background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.3); cursor: not-allowed; box-shadow: none; }
+        
+        /* 戻るボタンのモダン化 */
+        button.back-btn { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255,255,255,0.7); padding: 14px 20px; font-size: 14px; font-weight: 500; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px; }
+        button.back-btn:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.3); color: #ffffff; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .full-width-btn { width: 100%; margin-top: 10px; margin-bottom: 0; }
+
+        /* PDFボタンのモダン化（サイバー・シアン） */
+        button.pdf-btn { background: linear-gradient(135deg, rgba(0, 210, 255, 0.1), rgba(30, 136, 229, 0.1)); border: 1px solid rgba(0, 210, 255, 0.5); color: #00d2ff; padding: 18px 30px; font-size: 16px; font-weight: 600; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-width: 320px; box-shadow: 0 10px 20px rgba(0, 210, 255, 0.1); margin: 0 auto; }
+        button.pdf-btn:hover { background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(30, 136, 229, 0.2)); border-color: #00d2ff; color: #ffffff; box-shadow: 0 10px 20px rgba(0, 210, 255, 0.3); transform: translateY(-2px); }
+        /* 4. ログイン画面専用 */
+        #login-container { max-width: 400px; margin: 15vh auto; text-align: center; }
+        #login-container .input-group { text-align: left; }
+        #login-container i.fa-fingerprint { font-size: 3em; color: #00d2ff; margin-bottom: 15px; }
+        #login-container input { width: 100%; padding: 12px 15px; margin-top: 8px; margin-bottom: 20px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 210, 255, 0.3); border-radius: 8px; color: #ffffff; font-size: 16px; box-sizing: border-box; outline: none; transition: all 0.3s ease; }
+        #login-container input:focus { border-color: #00d2ff; box-shadow: 0 0 10px rgba(0, 210, 255, 0.4); background: rgba(0, 0, 0, 0.5); }
+
+        /* 5. カテゴリ選択画面専用 */
+        .category-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px; }
+        .cat-btn { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(166, 77, 255, 0.4); padding: 20px; border-radius: 12px; color: #fff; font-size: 16px; font-weight: 600; text-align: left; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: space-between; }
+        .cat-btn:hover { background: rgba(166, 77, 255, 0.2); border-color: #a64dff; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(166, 77, 255, 0.2); }
+        .cat-btn i { font-size: 20px; color: #00d2ff; }
+
+        /* 6. ダッシュボード部分 */
+        #dashboard { width: 100%; max-width: 1000px; }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+        @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } }
+        .panel { background: rgba(25, 25, 35, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; }
+        .panel h3 { color: #10b981; margin-top: 0; font-size: 18px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .summary-box { background: rgba(166, 77, 255, 0.15); border-left: 4px solid #a64dff; padding: 20px; border-radius: 0 8px 8px 0; font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.9); margin-bottom: 30px; }
+        .field-table { width: 100%; border-collapse: collapse; }
+        .field-table th, .field-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; font-size: 14px; line-height: 1.5; }
+        .field-table th { color: rgba(255,255,255,0.7); width: 100px; vertical-align: top; }
+        .field-table td { color: rgba(255,255,255,0.9); }
+        .matrix-list { list-style: none; padding: 0; margin: 0; }
+        .matrix-item { margin-bottom: 15px; background: rgba(0,0,0,0.3); border: 1px solid rgba(166, 77, 255, 0.1); padding: 15px; border-radius: 8px; }
+        .matrix-header { display: flex; justify-content: space-between; margin-bottom: 5px; color: #a64dff; font-weight: 600; font-size: 14px; }
+        .matrix-reason { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.4; }
+        #radarChartContainer { width: 100%; max-width: 400px; margin: 0 auto; aspect-ratio: 1; }
+
+        /* 7. PDF保存・印刷用の特殊CSS (Print CSS) */
+        @media print {
+            body { background: #0f111a !important; padding: 0 !important; }
+            .bg-animation, .print-hide { display: none !important; } 
+            #dashboard { max-width: 100% !important; margin: 0 !important; }
+            .panel { border: 1px solid #333 !important; break-inside: avoid; } 
+            .summary-box { border: 1px solid #a64dff !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-animation">
+    <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+</div>
+
+<!-- ① ログイン画面 -->
+<div class="container" id="login-container">
+  <i class="fas fa-fingerprint"></i>
+  <h2>System Access</h2>
+  <div class="input-group">
+      <label>Access Code</label>
+      <input type="password" id="login-pass" placeholder="パスワードを入力してください">
+  </div>
+  <button class="action-btn" type="button" onclick="handleLogin()">Secure Login</button>
+</div>
+
+<!-- ② テーマ(カテゴリ)選択画面 -->
+<div class="container hidden" id="category-container">
+    <h2>壁打ちテーマを選択</h2>
+    <p style="text-align: center; color: rgba(255,255,255,0.8); margin-bottom: 30px; font-size: 14px;">
+        検証したいプロジェクトの性質に最も近いものを選んでください。
+    </p>
+    <div class="category-grid">
+        <button class="cat-btn" onclick="selectCategory('PROPOSAL')">
+            <span>1. 企画書・社内提案の事前検証</span> <i class="fa-solid fa-file-contract"></i>
+        </button>
+        <button class="cat-btn" onclick="selectCategory('IMPROVEMENT')">
+            <span>2. 既存事業・サービスの伸び悩み改善</span> <i class="fa-solid fa-arrow-trend-up"></i>
+        </button>
+        <button class="cat-btn" onclick="selectCategory('RESEARCH')">
+            <span>3. 市場調査・顧客インタビューの解像度上げ</span> <i class="fa-solid fa-magnifying-glass-chart"></i>
+        </button>
+        <button class="cat-btn" onclick="selectCategory('DX_OPS')">
+            <span>4. 業務改革・DX・社内システム導入</span> <i class="fa-solid fa-network-wired"></i>
+        </button>
+    </div>
+</div>
+
+<!-- ③ 分析コンソール (フォーム) -->
+<div class="container hidden" id="input-container">
+    <h2>AI Analysis Console</h2>
+    <div class="input-group">
+        <label>ターゲット属性 <span class="required-tag">重要</span></label>
+        <textarea id="val-target"></textarea>
+    </div>
+    <div class="input-group">
+        <label>現状の客観的事実 <span class="required-tag">最重要</span></label>
+        <textarea id="val-reality" class="highlight" placeholder="例: 各営業担当が過去の提案書を個人のPCから探し、毎回1からコピペ作成している"></textarea>
+    </div>
+    <div class="input-group">
+        <label>目指す理想</label>
+        <textarea id="val-ideal"></textarea>
+    </div>
+    <div class="input-group">
+        <label>理想との乖離</label>
+        <textarea id="val-gap" placeholder="例: 共有ツールは導入されたが入力が手間で結局「属人的に聞く」文化から脱却できていない"></textarea>
+    </div>
+    <div class="input-group">
+        <label>現状の投資行動 <span class="required-tag">最重要</span></label>
+        <textarea id="val-action" class="highlight" placeholder="例: 毎回先輩に30分以上の時間を割いてもらい、過去資料の共有をお願いしている"></textarea>
+    </div>
+    <div class="input-group">
+        <label>挫折の障壁</label>
+        <textarea id="val-pain" placeholder="例: 資料を探す作業に週8時間以上奪われ、コア業務である商談数が頭打ちになっている"></textarea>
+    </div>
+    
+    <button type="button" class="action-btn" id="run-btn" onclick="submitData()">AI推論を実行する</button>
+    
+    <!-- ★ここへ移動＆モダン化 -->
+    <button class="back-btn full-width-btn" onclick="backToCategory()"><i class="fa-solid fa-layer-group"></i> テーマ選択に戻る</button>
+</div>
+
+<!-- ④ ダッシュボード -->
+<div id="dashboard" class="hidden">
+    <!-- ★追加：フォームに戻るボタン（印刷時は非表示） -->
+    <div class="print-hide" style="text-align: left; width: 100%; max-width: 1000px; margin: 0 auto 20px;">
+        <button class="back-btn" onclick="backToForm()"><i class="fa-solid fa-arrow-left"></i> 入力フォームに戻って修正する</button>
+    </div>
+
+    <h2 style="font-size: 36px; text-align: center; margin-bottom: 40px; background: linear-gradient(90deg, #ff4b72, #a64dff, #00d2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Scientific Verification Report</h2>
+    <div class="summary-box" id="res-summary"></div>
+    <div class="dashboard-grid">
+        <div class="panel">
+            <h3><i class="fa-solid fa-list-check"></i> 6項目個別アナリティクス</h3>
+            <table class="field-table">
+                <tr><th>Target</th><td id="res-target"></td></tr>
+                <tr><th>Reality</th><td id="res-reality"></td></tr>
+                <tr><th>Ideal</th><td id="res-ideal"></td></tr>
+                <tr><th>Gap</th><td id="res-gap"></td></tr>
+                <tr><th>Action</th><td id="res-action"></td></tr>
+                <tr><th>Pain</th><td id="res-pain"></td></tr>
+            </table>
+        </div>
+        <div class="panel">
+            <h3><i class="fa-solid fa-chart-radar"></i> マトリクス整合性スコア</h3>
+            <div id="radarChartContainer">
+                <canvas id="matrixChart"></canvas>
+            </div>
+            <ul class="matrix-list" id="res-matrix-list" style="margin-top: 20px;"></ul>
+        </div>
+    </div>
+    <!-- (ダッシュボード・マトリクスの下部) -->
+    <div class="print-hide" style="text-align: center; margin-top: 50px;">
+        <!-- ★ モダンなPDFボタンに差し替え -->
+        <button class="pdf-btn" onclick="window.print()">
+            <i class="fa-solid fa-file-pdf"></i> レポートをPDFで保存する
+        </button>
+    </div>
+</div>
+
+<script>
+    let myChart = null;
+    let currentMode = 'PROPOSAL'; 
+
+    // 1. ログイン処理
+    function handleLogin() {
+      const pass = document.getElementById('login-pass').value;
+      if (pass === "admin") {
+        document.getElementById('login-container').classList.add('hidden');
+        document.getElementById('category-container').classList.remove('hidden');
+        window.scrollTo(0, 0);
+      } else {
+        alert("アクセスコードが間違っています。");
+      }
+    }
+    document.getElementById('login-pass').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') handleLogin();
+    });
+
+    // 2. カテゴリ選択処理
+    function selectCategory(mode) {
+        currentMode = mode;
+        const placeholders = {
+            'PROPOSAL': {
+                target: "例: 決裁権を持つ営業部長や、予算管理をおこなう経営企画担当",
+                ideal: "例: 新しいツールの導入により、月間の残業時間が30%削減され、利益率が向上する"
+            },
+            'IMPROVEMENT': {
+                target: "例: サービス登録後1ヶ月以内に離脱してしまう無料ユーザー",
+                ideal: "例: ユーザーが毎日自発的にログインし、有料プランへの移行率が現状の3倍になる"
+            },
+            'RESEARCH': {
+                target: "例: 新規事業を命じられたが、何から手をつければいいか迷っている担当者",
+                ideal: "例: 顧客の本当の痛みが可視化され、無駄な開発をせずに最短で検証が終わる状態"
+            },
+            'DX_OPS': {
+                target: "例: 毎日現場で日報を手入力している若手〜中堅の現場作業員",
+                ideal: "例: スマホから音声で入力するだけで日報が完了し、現場の入力ストレスがゼロになる"
+            }
+        };
+        document.getElementById('val-target').placeholder = placeholders[mode].target;
+        document.getElementById('val-ideal').placeholder = placeholders[mode].ideal;
+
+        document.getElementById('category-container').classList.add('hidden');
+        document.getElementById('input-container').classList.remove('hidden');
+        window.scrollTo(0, 0);
+    }
+
+    // ★追加：テーマ選択に戻る処理
+    function backToCategory() {
+        document.getElementById('input-container').classList.add('hidden');
+        document.getElementById('category-container').classList.remove('hidden');
+        window.scrollTo(0, 0);
+    }
+
+    // ★追加：フォームに戻る処理
+    function backToForm() {
+        document.getElementById('dashboard').classList.add('hidden');
+        document.getElementById('input-container').classList.remove('hidden');
+        
+        // 実行ボタンの状態をリセット
+        const btn = document.getElementById('run-btn');
+        btn.innerText = "AI推論を実行する";
+        btn.disabled = false;
+        
+        window.scrollTo(0, 0);
+    }
+
+    // 3. 分析実行処理 (GAS通信 & モック処理)
+    function submitData() {
+        const btn = document.getElementById('run-btn');
+        btn.innerText = "科学的分析を実行中... (約10秒)";
+        btn.disabled = true;
+
+        const data = {
+            mode: currentMode,
+            targetAttribute: document.getElementById('val-target').value,
+            reality: document.getElementById('val-reality').value,
+            ideal: document.getElementById('val-ideal').value,
+            gap: document.getElementById('val-gap').value,
+            action: document.getElementById('val-action').value,
+            pain: document.getElementById('val-pain').value
+        };
+
+        if (typeof google !== 'undefined' && google.script) {
+            google.script.run
+                .withSuccessHandler(function(jsonString) {
+                    renderDashboard(jsonString);
+                    btn.innerText = "分析完了";
+                })
+                .withFailureHandler(function(error) {
+                    alert("エラーが発生しました:\n" + error.message);
+                    btn.innerText = "AI推論を実行する";
+                    btn.disabled = false;
+                })
+                .processFromWeb(data);
+        } else {
+            // テスト用モックデータ
+            setTimeout(() => {
+                renderDashboard({
+                    overall_summary: "高い具体性があり、ソリューション導入による業務効率化が期待できます。",
+                    field_analysis: { target: data.targetAttribute, reality: data.reality, ideal: data.ideal, gap: data.gap, action: data.action, pain: data.pain },
+                    matrix_evaluations: [
+                        { variable_name: "現場の自発的投資", score: 80, reason: "既存のフローに対する痛みが明確です。" },
+                        { variable_name: "投資対効果の根拠", score: 70, reason: "ペルソナが一定絞り込まれています。" },
+                        { variable_name: "導入コストの軽さ", score: 90, reason: "目指すべき状態が具体的に言語化されています。" },
+                        { variable_name: "定量的な撤退ルール", score: 60, reason: "代替手段への時間投資が見られます。" },
+                        { variable_name: "スモールスタート性", score: 85, reason: "技術的に解決可能な領域に合致しています。" }
+                    ]
+                });
+            }, 1500);
+        }
+    }
+
+    // 4. ダッシュボード描画関数
+    function renderDashboard(responseData) {
+        let data;
+        try {
+            data = typeof responseData === "string" ? JSON.parse(responseData) : responseData;
+        } catch(e) {
+            alert("データの解析に失敗しました。");
+            document.getElementById('run-btn').innerText = "AI推論を実行する";
+            document.getElementById('run-btn').disabled = false;
+            return;
+        }
+
+        document.getElementById('input-container').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        window.scrollTo(0, 0);
+
+        document.getElementById('res-summary').innerText = data.overall_summary || data.summary || "総評データがありません。";
+        const fields = data.field_analysis || data;
+        document.getElementById('res-target').innerText = fields.target || "-";
+        document.getElementById('res-reality').innerText = fields.reality || "-";
+        document.getElementById('res-ideal').innerText = fields.ideal || "-";
+        document.getElementById('res-gap').innerText = fields.gap || "-";
+        document.getElementById('res-action').innerText = fields.action || "-";
+        document.getElementById('res-pain').innerText = fields.pain || "-";
+
+        const matrixList = document.getElementById('res-matrix-list');
+        matrixList.innerHTML = "";
+        let labels = [], scores = [];
+        const matrixData = data.matrix_evaluations || data.matrix;
+
+        if(matrixData && Array.isArray(matrixData)) {
+            matrixData.forEach(m => {
+                const labelName = m.variable_name || m.name || "不明";
+                labels.push(labelName);
+                scores.push(m.score);
+                const li = document.createElement('li');
+                li.className = 'matrix-item';
+                li.innerHTML = `<div class="matrix-header"><span>${labelName}</span><span>${m.score}/100</span></div><div class="matrix-reason">${m.reason}</div>`;
+                matrixList.appendChild(li);
+            });
+        }
+
+        if (myChart) myChart.destroy();
+        const ctx = document.getElementById('matrixChart').getContext('2d');
+        myChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: labels.length > 0 ? labels : ["A", "B", "C", "D", "E"],
+                datasets: [{
+                    label: 'スコア',
+                    data: scores.length > 0 ? scores : [0, 0, 0, 0, 0],
+                    backgroundColor: 'rgba(166, 77, 255, 0.2)',
+                    borderColor: '#a64dff',
+                    pointBackgroundColor: '#ff4b72',
+                    pointBorderColor: '#fff'
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        pointLabels: { color: 'rgba(255, 255, 255, 0.8)', font: { size: 10 } },
+                        ticks: { display: false, min: 0, max: 100 }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+</script>
+</body>
+</html>
